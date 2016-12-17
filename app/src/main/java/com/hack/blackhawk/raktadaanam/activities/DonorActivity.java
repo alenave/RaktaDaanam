@@ -1,17 +1,22 @@
 package com.hack.blackhawk.raktadaanam.activities;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.hack.blackhawk.raktadaanam.MainActivity;
 import com.hack.blackhawk.raktadaanam.R;
 
 
@@ -68,21 +73,11 @@ public class DonorActivity extends AppCompatActivity {
                 if (sendRequest && !checkDob(dob)) {
                     sendRequest = false;
                 }
-                /*Log.d("name", name);
-                Log.d("pass", pass);
-                Log.d("mobile", ""+mobile);
-                Log.d("dob", dob);
-                Log.d("gender", gender);
-                Log.d("bg", bg);*/
-
                 if (sendRequest) {
-                    //success!
-                    AlertDialog.Builder builder = new AlertDialog.Builder(DonorActivity.this);
-                    builder.setMessage("Doner request send")
-                            .setTitle("Doner request send")
-                            .setPositiveButton("Ok", null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                    Intent intent = new Intent(DonorActivity.this, HistoryPopup.class);
+                    //To pass: obj to be bean class
+                    //intent.putExtra("MyClass", obj);
+                    startActivity(intent, null);
                 } else {
                     //fail!
                     AlertDialog.Builder builder = new AlertDialog.Builder(DonorActivity.this);
@@ -93,6 +88,15 @@ public class DonorActivity extends AppCompatActivity {
                     dialog.show();
                 }
 
+            }
+        });
+
+        TextView t1 = (TextView)findViewById(R.id.alredyDonor);
+        t1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DonorActivity.this, LoginActivity.class);
+                startActivity(intent, null);
             }
         });
     }

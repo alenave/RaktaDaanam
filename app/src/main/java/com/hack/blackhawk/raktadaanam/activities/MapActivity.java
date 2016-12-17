@@ -41,7 +41,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
         permission();
 
-        textView = (TextView) findViewById(R.id.text);
+//        textView = (TextView) findViewById(R.id.text);
 
         try {
             // Loading map
@@ -193,7 +193,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     mGoogleApiClient);
         }
         if (mLastLocation != null) {
-            textView.setText(String.valueOf(mLastLocation.getLatitude()));
+//            textView.setText(String.valueOf(mLastLocation.getLatitude()));
         }
     }
 
