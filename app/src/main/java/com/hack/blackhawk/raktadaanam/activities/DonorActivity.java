@@ -21,6 +21,8 @@ public class DonorActivity extends AppCompatActivity {
     EditText e1, e2, e3, e4;
     RadioGroup r1;
     Spinner s1;
+    String name, pass, dob, gender, bg;
+    long mobile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,30 +44,63 @@ public class DonorActivity extends AppCompatActivity {
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    String name = e1.getText().toString();
-                    String pass = e2.getText().toString();
-                    int mobile = Integer.parseInt(e3.getText().toString());
-                    String dob = e4.getText().toString();
+                boolean sendRequest = false;
+                //check any empty entry
+                if ("".equalsIgnoreCase(e1.getText().toString())|| "".equalsIgnoreCase(e2.getText().toString())
+                        || "".equalsIgnoreCase(e3.getText().toString()) || "".equalsIgnoreCase(e4.getText().toString()) || !checkMobile(e3.getText().toString())) {
+                    sendRequest = false;
+                } else {
+                    name = e1.getText().toString();
+                    pass = e2.getText().toString();
+                    dob = e4.getText().toString();
                     int selectedGenderId = r1.getCheckedRadioButtonId();
                     RadioButton genderButton = (RadioButton)findViewById(selectedGenderId);
-                    String gender = genderButton.getText().toString();
-                    String bg = s1.getSelectedItem().toString();
-
-                Log.d("name", name);
+                    gender = genderButton.getText().toString();
+                    bg = s1.getSelectedItem().toString();
+                    mobile = Long.parseLong(e3.getText().toString());
+                    sendRequest = true;
+                }
+                //check present blood group
+                if (sendRequest && bg.equalsIgnoreCase("--Select--")) {
+                    sendRequest = false;
+                }
+                //check if date is correct
+                if (sendRequest && !checkDob(dob)) {
+                    sendRequest = false;
+                }
+                /*Log.d("name", name);
                 Log.d("pass", pass);
                 Log.d("mobile", ""+mobile);
                 Log.d("dob", dob);
                 Log.d("gender", gender);
-                Log.d("bg", bg);
+                Log.d("bg", bg);*/
 
-                //success!
-                AlertDialog.Builder builder = new AlertDialog.Builder(DonorActivity.this);
-                builder.setMessage("Doner request send")
-                        .setTitle("Doner request send")
-                        .setPositiveButton("Ok", null);
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                if (sendRequest) {
+                    //success!
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DonorActivity.this);
+                    builder.setMessage("Doner request send")
+                            .setTitle("Doner request send")
+                            .setPositiveButton("Ok", null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    //fail!
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DonorActivity.this);
+                    builder.setMessage("Error")
+                            .setTitle("Please fill all the entries correctly")
+                            .setPositiveButton("Ok", null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+
             }
         });
+    }
+
+    private boolean checkDob(String date) {
+        return date.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})") ? true : false;
+    }
+    private boolean checkMobile(String mobile) {
+        return mobile.matches("^(?:(?:\\+?1\\s*(?:[.-]\\s*)?)?(?:\\(\\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\\s*\\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\\s*(?:[.-]\\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\\s*(?:[.-]\\s*)?([0-9]{4})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$") ? true : false;
     }
 }
