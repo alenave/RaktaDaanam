@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -23,11 +24,16 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.hack.blackhawk.raktadaanam.R;
 
 import static android.support.v7.app.AlertDialog.Builder;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnMarkerClickListener {
 
     // Google Map
     private GoogleMap googleMap;
@@ -57,19 +63,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void checkLocationOn() {
-        LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        LocationManager lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = false;
         boolean network_enabled = false;
 
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
+        } catch (Exception ex) {
+        }
 
         try {
             network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ex) {}
+        } catch (Exception ex) {
+        }
 
-        if(!gps_enabled && !network_enabled) {
+        if (!gps_enabled && !network_enabled) {
             // notify user
             Builder dialog = new Builder(this);
             dialog.setMessage(getApplicationContext().getResources().getString(R.string.gps_network_not_enabled));
@@ -77,7 +85,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     // TODO Auto-generated method stub
-                    Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     startActivity(myIntent);
                     //get gps
                 }
@@ -98,7 +106,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     /**
      * function to load map. If map is not created it will create it for you
-     * */
+     */
     private void initializeMap() {
         if (googleMap == null) {
             MapFragment mapFragment = (MapFragment) getFragmentManager()
@@ -110,7 +118,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
-
     @Override
     public void onMapReady(GoogleMap map) {
 
@@ -120,7 +127,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
-    public void setUpMap(){
+    public void setUpMap() {
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -141,6 +148,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .build();
         }
         mGoogleApiClient.connect();
+
     }
 
     @Override
@@ -194,8 +202,55 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         if (mLastLocation != null) {
 //            textView.setText(String.valueOf(mLastLocation.getLatitude()));
+
+            LatLng pinPoint = null;
+            pinPoint = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(pinPoint).title("Donor").snippet("Population: 4,137,400").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))).setTag(0);
+
+            // Set a listener for marker click.
+            googleMap.setOnMarkerClickListener(this);
+            googleMap.addCircle(new CircleOptions()
+                    .center(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))
+                    .radius(10000)
+                    .strokeColor(Color.RED));
         }
     }
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+
+        // Retrieve the data from the marker.
+        Integer clickCount = (Integer) marker.getTag();
+
+        // Check if a click count was set, then display the click count.
+        if (clickCount != null) {
+//            clickCount = clickCount + 1;
+//            marker.setTag(clickCount);
+            marker.showInfoWindow();
+//            Toast.makeText(this,
+//                    marker.getTitle() +
+//                            " has been clicked " + clickCount + " times.",
+
+        }
+        return false;
+    }
+//    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
+//
+//        View customMarkerView = ((LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_custom_marker, null);
+//        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
+//        markerImageView.setImageResource(resId);
+//        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+//        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+//        customMarkerView.buildDrawingCache();
+//        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(),
+//                Bitmap.Config.ARGB_8888);
+//        Canvas canvas = new Canvas(returnedBitmap);
+//        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+//        Drawable drawable = customMarkerView.getBackground();
+//        if (drawable != null)
+//            drawable.draw(canvas);
+//        customMarkerView.draw(canvas);
+//        return returnedBitmap;
+//    }
 
     @Override
     public void onConnectionSuspended(int i) {

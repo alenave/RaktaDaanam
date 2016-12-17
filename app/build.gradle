@@ -29,5 +29,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.1'
     testCompile 'junit:junit:4.12'
-    compile files('libs/xstream-1.4.9.jar')
+    compile 'com.google.code.gson:gson:2.2.4'
 }
