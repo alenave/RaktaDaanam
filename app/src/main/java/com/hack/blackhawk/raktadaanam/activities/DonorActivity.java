@@ -18,6 +18,20 @@ import android.widget.TextView;
 
 import com.hack.blackhawk.raktadaanam.MainActivity;
 import com.hack.blackhawk.raktadaanam.R;
+import com.hack.blackhawk.raktadaanam.models.People;
+import com.hack.blackhawk.raktadaanam.utils.Request;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import static com.hack.blackhawk.raktadaanam.utils.Request.post;
 
 
 public class DonorActivity extends AppCompatActivity {
@@ -28,24 +42,25 @@ public class DonorActivity extends AppCompatActivity {
     Spinner s1;
     String name, pass, dob, gender, bg;
     long mobile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donor);
-        Spinner dropdown = (Spinner)findViewById(R.id.bloodGroup);
-        String[] items = new String[]{"--Select--","A+", "A-", "B+","B-", "O+", "O-","AB+","AB-"};
+        Spinner dropdown = (Spinner) findViewById(R.id.bloodGroup);
+        String[] items = new String[]{"--Select--", "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setSelection(0);
         dropdown.setAdapter(adapter);
 
-        e1 = (EditText)findViewById(R.id.input_name);
-        e2 = (EditText)findViewById(R.id.input_password);
-        e3 = (EditText)findViewById(R.id.mobile_no);
-        e4 = (EditText)findViewById(R.id.input_dob);
-        r1 = (RadioGroup)findViewById(R.id.radioGrp);
-        s1 = (Spinner)findViewById(R.id.bloodGroup);
+        e1 = (EditText) findViewById(R.id.input_name);
+        e2 = (EditText) findViewById(R.id.input_password);
+        e3 = (EditText) findViewById(R.id.mobile_no);
+        e4 = (EditText) findViewById(R.id.input_dob);
+        r1 = (RadioGroup) findViewById(R.id.radioGrp);
+        s1 = (Spinner) findViewById(R.id.bloodGroup);
 
-        b1 = (Button)findViewById(R.id.donorRegistration);
+        b1 = (Button) findViewById(R.id.donorRegistration);
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,6 +93,7 @@ public class DonorActivity extends AppCompatActivity {
                     //To pass: obj to be bean class
                     //intent.putExtra("MyClass", obj);
                     startActivity(intent, null);
+
                 } else {
                     //fail!
                     AlertDialog.Builder builder = new AlertDialog.Builder(DonorActivity.this);
