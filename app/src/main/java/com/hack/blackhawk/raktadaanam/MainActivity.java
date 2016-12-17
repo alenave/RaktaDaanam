@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .addApi(LocationServices.API)
                     .build();
         }
+        mGoogleApiClient.connect();
     }
 
     @Override
