@@ -2,44 +2,43 @@ package com.hack.blackhawk.raktadaanam.models;
 
 
 public class Location {
-    public Location(int id, float lat, float lng, People people) {
-        this.id = id;
+    public Location(double lat, double lng) {
         this.lat = lat;
         this.lng = lng;
-        this.people = people;
+        //this.people = people;
     }
 
     public int getId() {
         return id;
     }
 
-    public float getLat() {
+    public double getLat() {
         return lat;
     }
 
-    public void setLat(float lat) {
+    public void setLat(double lat) {
         this.lat = lat;
     }
 
-    public float getLng() {
+    public double getLng() {
         return lng;
     }
 
-    public void setLng(float lng) {
+    public void setLng(double lng) {
         this.lng = lng;
     }
 
-    public People getPeople() {
-        return people;
-    }
-
-    public void setPeople(People people) {
-        this.people = people;
-    }
+//    public People getPeople() {
+//        return people;
+//    }
+//
+//    public void setPeople(People people) {
+//        this.people = people;
+//    }
 
     int id;
-    float lat;
-    float lng;
-    People people;
+    double lat;
+    double lng;
+//    People people;
 
 }

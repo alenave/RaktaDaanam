@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "101238574978",
+    "firebase_url": "https://raktadaanam.firebaseio.com",
+    "project_id": "raktadaanam",
+    "storage_bucket": "raktadaanam.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:101238574978:android:3517a567a77b7d67",
+        "android_client_info": {
+          "package_name": "com.hack.blackhawk.raktadaanam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "101238574978-465e4g4blolav8j2qt6sv0e6fsrauur4.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "101238574978-nch9iufg0enaf2o7sshdt1gar4d02ke7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtHR7IStEfFASxnRf8s5Jnq84ca1c6z3E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

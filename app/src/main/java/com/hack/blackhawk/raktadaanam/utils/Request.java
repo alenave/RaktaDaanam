@@ -15,41 +15,24 @@ import java.net.URL;
 
 public class Request {
 
-    public static JSONObject post(JSONObject object){
-        JSONObject requestBody = new JSONObject();
-        JSONObject agrsBody = new JSONObject();
-        try {
-            agrsBody.put("table", "People");
-            JSONArray jsonArray = new JSONArray();
-            jsonArray.put(object);
-            agrsBody.put("objects", jsonArray);
-            requestBody.put("type", "insert");
-            requestBody.put("args", agrsBody);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        Log.d("REQUEST BODY", requestBody.toString());
-        Log.d("Came here", "Yeah");
-        System.out.print("I came here");
+    public static JSONObject post(String requestBody){
 
         int httpResult = 0;
         HttpURLConnection con = null;
         JSONObject jo = null;
         try {
-            URL url = new URL("https://data.cassette88.hasura-app.io/v1/query");
+            URL url = new URL("https://blooming-plateau-54995.herokuapp.com/donors.json");
             con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
             con.setDoInput(true);
             //con.setConnectTimeout(5000);
             //con.setReadTimeout(30000);
             con.setRequestProperty("Content-Type", "application/json");
-//            con.setRequestProperty("Accept", "application/json");
+            con.setRequestProperty("Accept", "application/json");
             con.setRequestMethod("POST");
 
             OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-            wr.write(object.toString());
+            wr.write(requestBody);
             wr.flush();
             httpResult = con.getResponseCode();
             Log.d("Result XXX", String.valueOf(httpResult));

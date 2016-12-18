@@ -1,6 +1,7 @@
 package com.hack.blackhawk.raktadaanam.utils;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
@@ -29,7 +30,7 @@ public class GPSTracker extends Service implements LocationListener {
     LocationManager locationManager;
     AlertDialogManager am = new AlertDialogManager();
 
-    public GPSTracker(Context context) {
+    public GPSTracker(Activity context) {
         this.context = context;
         getLocation();
     }
@@ -84,7 +85,7 @@ public class GPSTracker extends Service implements LocationListener {
         return location;
     }
     public void showSettingsAlert(){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
         // Setting Dialog Title
         alertDialog.setTitle("GPS is settings");
@@ -99,7 +100,7 @@ public class GPSTracker extends Service implements LocationListener {
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog,int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
+                context.startActivity(intent);
                 dialog.cancel();
             }
         });

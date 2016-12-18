@@ -1,18 +1,20 @@
 package com.hack.blackhawk.raktadaanam.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
-public class People {
+public class People implements Serializable{
+    public People() {
+    }
 
-    public People(String name, long mobileNumber, String bloodGroup, Date dob, String gender, String password, Date lastDonationDate) {
+    public People(String name, long mobileNumber, String bloodGroup, Date dob, String gender, String password) {
         this.name = name;
         this.mobileNumber = mobileNumber;
         this.bloodGroup = bloodGroup;
         this.dob = dob;
         this.gender = gender;
         this.password = password;
-        this.lastDonationDate = lastDonationDate;
     }
 
     public int getId() {
@@ -75,6 +77,14 @@ public class People {
         this.lastDonationDate = lastDonationDate;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     int id;
     String name;
     long mobileNumber;
@@ -83,4 +93,5 @@ public class People {
     String gender;
     String password;
     Date lastDonationDate;
+    Location location;
 }
