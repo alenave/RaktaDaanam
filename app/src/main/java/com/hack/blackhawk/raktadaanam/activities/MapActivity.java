@@ -15,12 +15,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,11 +43,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private TextView textView;
+    private LocationManager lm;
+//    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+//        imageView = (ImageView) findViewById(R.id.marker);
         permission();
 
 //        textView = (TextView) findViewById(R.id.text);
@@ -63,7 +69,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void checkLocationOn() {
-        LocationManager lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = false;
         boolean network_enabled = false;
 
@@ -138,6 +144,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 googleMap.setMyLocationEnabled(true);
             }
         }
+
         googleMap.setTrafficEnabled(true);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         if (mGoogleApiClient == null) {
@@ -201,20 +208,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     mGoogleApiClient);
         }
         if (mLastLocation != null) {
+//            LatLng center = googleMap.getCameraPosition().target;
 //            textView.setText(String.valueOf(mLastLocation.getLatitude()));
-
-            LatLng pinPoint = null;
-            pinPoint = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            googleMap.addMarker(new MarkerOptions().position(pinPoint).title("Donor").snippet("Population: 4,137,400").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))).setTag(0);
-
-            // Set a listener for marker click.
-            googleMap.setOnMarkerClickListener(this);
             googleMap.addCircle(new CircleOptions()
                     .center(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))
                     .radius(10000)
                     .strokeColor(Color.RED));
+            LatLng pinPoint = null;
+            pinPoint = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(pinPoint).title("Donor").snippet("Population: 4,137,400").icon(BitmapDescriptorFactory.fromResource(R.mipmap.green))).setTag(0);
+//            setMarkerForDonor();
+            // Set a listener for marker click.
+            googleMap.setOnMarkerClickListener(this);
+
         }
     }
+
+    private void setMarkerForDonor() {
+        LatLng pinPoint = null;
+        pinPoint = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        googleMap.addMarker(new MarkerOptions().position(pinPoint).title("Donor").snippet("Population: 4,137,400").icon(BitmapDescriptorFactory.fromResource(R.mipmap.red))).setTag(0);
+    }
+
     @Override
     public boolean onMarkerClick(final Marker marker) {
 

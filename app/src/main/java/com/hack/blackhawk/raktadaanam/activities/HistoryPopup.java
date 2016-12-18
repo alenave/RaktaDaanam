@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.hack.blackhawk.raktadaanam.R;
 import com.hack.blackhawk.raktadaanam.models.Location;
 import com.hack.blackhawk.raktadaanam.models.People;
@@ -59,24 +60,24 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
 
                     EditText e1 = (EditText) findViewById(R.id.input_donationDate);
                     String lastDonate = e1.getText().toString();
-                    Date lastDonationDate = new Date();
+                    Date last_donation_date = new Date();
                     if ("".equalsIgnoreCase(lastDonate) || !checkDob(lastDonate)) {
                         Date today = new Date();
                         Calendar cal = new GregorianCalendar();
                         cal.setTime(today);
                         cal.add(Calendar.DAY_OF_MONTH, -56);
-                        lastDonationDate = cal.getTime();
+                        last_donation_date = cal.getTime();
 
                     } else {
                         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                         try {
-                            lastDonationDate = df.parse(lastDonate);
+                            last_donation_date = df.parse(lastDonate);
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
 
-                    people.setLastDonationDate(lastDonationDate);
+                    people.setLastDonationDate(last_donation_date);
                     Location location = new Location(latitude, longitude);
                     people.setLocation(location);
                     String requestBody = createJSONBody(people);
@@ -95,7 +96,8 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
     }
 
     private String createJSONBody(People people) {
-        Gson gson = new Gson();
+//        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         String jsonInString = gson.toJson(people);
         return jsonInString;
 

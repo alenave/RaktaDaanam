@@ -35,7 +35,7 @@ public class Request {
             wr.write(requestBody);
             wr.flush();
             httpResult = con.getResponseCode();
-            Log.d("Result XXX", String.valueOf(httpResult));
+//            Log.d("Result XXX", String.valueOf(httpResult));
             String msg = "";
             Object json = null;
             if (httpResult == HttpURLConnection.HTTP_OK) {
@@ -59,5 +59,4 @@ public class Request {
         }
         return jo;
     }
-
 }

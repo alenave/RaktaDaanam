@@ -32,7 +32,7 @@ import static com.hack.blackhawk.raktadaanam.utils.Request.post;
 public class DonorActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button b1;
-    EditText e1, e2, e3, e4;
+    EditText userName, password, mobile_number, dateOfBirth;
     RadioGroup r1;
     Spinner s1;
     String name, pass, dob, gender, bg;
@@ -42,19 +42,19 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donor);
-        Spinner dropdown = (Spinner) findViewById(R.id.bloodGroup);
+        Spinner dropdown = (Spinner) findViewById(R.id.blood_group);
         String[] items = new String[]{"--Select--", "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setSelection(0);
         dropdown.setAdapter(adapter);
 
 
-        e1 = (EditText) findViewById(R.id.input_name);
-        e2 = (EditText) findViewById(R.id.input_password);
-        e3 = (EditText) findViewById(R.id.mobile_no);
-        e4 = (EditText) findViewById(R.id.input_dob);
+        userName = (EditText) findViewById(R.id.input_name);
+        password = (EditText) findViewById(R.id.input_password);
+        mobile_number = (EditText) findViewById(R.id.mobile_no);
+        dateOfBirth = (EditText) findViewById(R.id.input_dob);
         r1 = (RadioGroup) findViewById(R.id.radioGrp);
-        s1 = (Spinner) findViewById(R.id.bloodGroup);
+        s1 = (Spinner) findViewById(R.id.blood_group);
 
         b1 = (Button) findViewById(R.id.donorRegistration);
         b1.setOnClickListener(this);
@@ -72,13 +72,11 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
 
 
     private boolean checkDob(String date) {
-//        return date.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})") ? true : false;
-        return true;
+        return date.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})") ? true : false;
     }
 
     private boolean checkMobile(String mobile) {
-//        return mobile.matches("^(?:(?:\\+?1\\s*(?:[.-]\\s*)?)?(?:\\(\\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\\s*\\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\\s*(?:[.-]\\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\\s*(?:[.-]\\s*)?([0-9]{4})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$") ? true : false;
-        return true;
+        return mobile.matches("^[7-9][0-9]{9}$") ? true : false;
     }
 
 
@@ -90,18 +88,18 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
             case R.id.donorRegistration:
                 boolean sendRequest = false;
                 //check any empty entry
-                if ("".equalsIgnoreCase(e1.getText().toString()) || "".equalsIgnoreCase(e2.getText().toString())
-                        || "".equalsIgnoreCase(e3.getText().toString()) || "".equalsIgnoreCase(e4.getText().toString()) || !checkMobile(e3.getText().toString())) {
+                if ("".equalsIgnoreCase(userName.getText().toString()) || "".equalsIgnoreCase(password.getText().toString())
+                        || "".equalsIgnoreCase(mobile_number.getText().toString()) || "".equalsIgnoreCase(dateOfBirth.getText().toString()) || !checkMobile(mobile_number.getText().toString())) {
                     sendRequest = false;
                 } else {
-                    name = e1.getText().toString();
-                    pass = e2.getText().toString();
-                    dob = e4.getText().toString();
+                    name = userName.getText().toString();
+                    pass = password.getText().toString();
+                    dob = dateOfBirth.getText().toString();
                     int selectedGenderId = r1.getCheckedRadioButtonId();
                     RadioButton genderButton = (RadioButton) findViewById(selectedGenderId);
                     gender = genderButton.getText().toString();
                     bg = s1.getSelectedItem().toString();
-                    mobile = Long.parseLong(e3.getText().toString());
+                    mobile = Long.parseLong(mobile_number.getText().toString());
                     sendRequest = true;
                 }
                 //check present blood group
@@ -114,21 +112,7 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
                 }
                 if (sendRequest) {
                     Intent intent = new Intent(DonorActivity.this, HistoryPopup.class);
-                    DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                    Date dateOfBirth = null;
-// Date newDOB = null;
-                    try {
-                        dateOfBirth = df.parse(dob);
-// newDOB = df.format(dateOfBirth);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-         //           Date today = new Date();
-//                    Calendar cal = new GregorianCalendar();
-//                    cal.setTime(today);
-//                    cal.add(Calendar.DAY_OF_MONTH, -56);
-//                    Date today56 = cal.getTime();
-                    People people = new People(name, mobile, bg, dateOfBirth, gender, pass);
+                    People people = new People(name, mobile, bg, dob, gender, pass);
 
                     intent.putExtra("People", people);
                     startActivity(intent, null);

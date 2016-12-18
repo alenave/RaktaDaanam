@@ -8,10 +8,10 @@ public class People implements Serializable{
     public People() {
     }
 
-    public People(String name, long mobileNumber, String bloodGroup, Date dob, String gender, String password) {
+    public People(String name, long mobile_number, String blood_group, String dob, String gender, String password) {
         this.name = name;
-        this.mobileNumber = mobileNumber;
-        this.bloodGroup = bloodGroup;
+        this.mobile_number = mobile_number;
+        this.blood_group = blood_group;
         this.dob = dob;
         this.gender = gender;
         this.password = password;
@@ -30,26 +30,26 @@ public class People implements Serializable{
     }
 
     public long getMobileNumber() {
-        return mobileNumber;
+        return mobile_number;
     }
 
-    public void setMobileNumber(long mobileNumber) {
-        this.mobileNumber = mobileNumber;
+    public void setMobileNumber(long mobile_number) {
+        this.mobile_number = mobile_number;
     }
 
     public String getBloodGroup() {
-        return bloodGroup;
+        return blood_group;
     }
 
-    public void setBloodGroup(String bloodGroup) {
-        this.bloodGroup = bloodGroup;
+    public void setBloodGroup(String blood_group) {
+        this.blood_group = blood_group;
     }
 
-    public Date getDob() {
+    public String getDob() {
         return dob;
     }
 
-    public void setDob(Date dob) {
+    public void setDob(String dob) {
         this.dob = dob;
     }
 
@@ -70,11 +70,11 @@ public class People implements Serializable{
     }
 
     public Date getLastDonationDate() {
-        return lastDonationDate;
+        return last_donation_date;
     }
 
-    public void setLastDonationDate(Date lastDonationDate) {
-        this.lastDonationDate = lastDonationDate;
+    public void setLastDonationDate(Date last_donation_date) {
+        this.last_donation_date = last_donation_date;
     }
 
     public Location getLocation() {
@@ -87,11 +87,11 @@ public class People implements Serializable{
 
     int id;
     String name;
-    long mobileNumber;
-    String bloodGroup;
-    Date dob;
+    long mobile_number;
+    String blood_group;
+    String dob;
     String gender;
     String password;
-    Date lastDonationDate;
+    Date last_donation_date;
     Location location;
 }
