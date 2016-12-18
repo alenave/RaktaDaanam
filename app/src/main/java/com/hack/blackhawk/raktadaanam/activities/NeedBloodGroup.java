@@ -29,7 +29,7 @@ public class NeedBloodGroup extends AppCompatActivity {
         dropdown.setSelection(0);
         dropdown.setAdapter(adapter);
         b1 = (Button)findViewById(R.id.needContinue);
-        s1 = (Spinner) findViewById(R.id.bloodGroup);
+        s1 = (Spinner) findViewById(R.id.needbloodGroup);
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
