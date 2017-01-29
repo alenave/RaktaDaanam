@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import com.hack.blackhawk.raktadaanam.activities.DonorActivity;
 import com.hack.blackhawk.raktadaanam.activities.MapActivity;
+import com.hack.blackhawk.raktadaanam.activities.NeedBloodGroup;
 
 public class MainActivity extends AppCompatActivity{
     Button b1,b2;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity{
         b2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                Intent intent = new Intent(MainActivity.this, NeedBloodGroup.class);
                 startActivity(intent, null);
             }
         });
