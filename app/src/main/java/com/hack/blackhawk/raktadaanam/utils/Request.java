@@ -1,5 +1,6 @@
 package com.hack.blackhawk.raktadaanam.utils;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -13,15 +14,17 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static com.hack.blackhawk.raktadaanam.utils.Config.API_URL;
+
 public class Request {
 
-    public static JSONObject post(String requestBody){
+    public static JSONObject post(String requestBody, String urlForAPI){
 
         int httpResult = 0;
         HttpURLConnection con = null;
         JSONObject jo = null;
         try {
-            URL url = new URL("https://blooming-plateau-54995.herokuapp.com/donors.json");
+            URL url = new URL(urlForAPI);
             con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
             con.setDoInput(true);
@@ -47,7 +50,7 @@ public class Request {
                 }
                 msg = resp.toString();
                 in.close();
-                //System.out.println("Response: "+msg);
+                System.out.println("Response: "+msg);
                 json = new JSONTokener(msg).nextValue();
                 jo = (JSONObject) json;
                 if (!jo.has("success")) {
@@ -57,6 +60,12 @@ public class Request {
         }catch(Exception e) {
             Log.d("Exception caught" , e.toString());
         }
+        System.out.print("JO" + jo);
         return jo;
     }
+
+
+
+
+
 }

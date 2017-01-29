@@ -8,13 +8,16 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.provider.VoicemailContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,7 +37,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hack.blackhawk.raktadaanam.R;
 
+import org.json.JSONObject;
+
 import static android.support.v7.app.AlertDialog.Builder;
+import static com.hack.blackhawk.raktadaanam.utils.Request.post;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnMarkerClickListener {
 
@@ -44,12 +50,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Location mLastLocation;
     private TextView textView;
     private LocationManager lm;
+//    private Intent intent;
+    String blood_group;
 //    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+//        blood_group = getIntent().getStringExtra("blood_group");
 //        imageView = (ImageView) findViewById(R.id.marker);
         permission();
 
@@ -216,8 +225,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .strokeColor(Color.RED));
             LatLng pinPoint = null;
             pinPoint = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            googleMap.addMarker(new MarkerOptions().position(pinPoint).title("Donor").snippet("Population: 4,137,400").icon(BitmapDescriptorFactory.fromResource(R.mipmap.green))).setTag(0);
-//            setMarkerForDonor();
+
+//            String reqBody = "{lat:" + mLastLocation.getLatitude() + ", lng:" +mLastLocation.getLongitude() + "blood_group: " + blood_group + "}";
+//            postCall(reqBody);
+            googleMap.addMarker(new MarkerOptions().position(pinPoint).title("Donor").snippet("Mobile: 9986756538").icon(BitmapDescriptorFactory.fromResource(R.mipmap.green))).setTag(0);
+            setMarkerForDonor();
             // Set a listener for marker click.
             googleMap.setOnMarkerClickListener(this);
 
@@ -225,9 +237,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void setMarkerForDonor() {
-        LatLng pinPoint = null;
-        pinPoint = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        googleMap.addMarker(new MarkerOptions().position(pinPoint).title("Donor").snippet("Population: 4,137,400").icon(BitmapDescriptorFactory.fromResource(R.mipmap.red))).setTag(0);
+        LatLng pinPoint1, pinPoint2, pinPoint3;
+        pinPoint1 = new LatLng(13.0533, 80.26);
+        googleMap.addMarker(new MarkerOptions().position(pinPoint1).title("Donor").snippet("Mobile: 9986756538").icon(BitmapDescriptorFactory.fromResource(R.mipmap.red))).setTag(0);
+        pinPoint2 = new LatLng(13.0533, 80.2601);
+        googleMap.addMarker(new MarkerOptions().position(pinPoint2).title("Donor").snippet("Mobile: 7667977404").icon(BitmapDescriptorFactory.fromResource(R.mipmap.red))).setTag(0);
+        pinPoint3 = new LatLng(13.0533, 80.261);
+        googleMap.addMarker(new MarkerOptions().position(pinPoint3).title("Donor").snippet("Mobile: 8951272242").icon(BitmapDescriptorFactory.fromResource(R.mipmap.red))).setTag(0);
+
     }
 
     @Override
@@ -271,4 +288,30 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onConnectionSuspended(int i) {
 
     }
+
+    JSONObject jsonObject_;
+
+    public void postCall(String peopleObj) {
+
+        new AsyncTask<String, Void, JSONObject>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+//                ProgressDlg.showProgressDialog(getContext(), "प्रतीक्षा करें...");
+            }
+
+            @Override
+            protected JSONObject doInBackground(String... params) {
+                return post(params[0], "https://blooming-plateau-54995.herokuapp.com/get_donors.json");
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject jsonObject) {
+                super.onPostExecute(jsonObject);
+                jsonObject_ = jsonObject;
+//                Log.d("lat long", jsonObject_.toString());
+            }
+        }.execute(peopleObj, null, null);
+    }
+
 }

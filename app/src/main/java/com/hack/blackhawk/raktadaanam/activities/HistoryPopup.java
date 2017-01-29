@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static com.hack.blackhawk.raktadaanam.utils.Config.API_URL;
 import static com.hack.blackhawk.raktadaanam.utils.Request.post;
 
 
@@ -56,7 +57,7 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
                 latitude = gps.getLatitude();
                 longitude = gps.getLongitude();
                 if (latitude > 1 && longitude > 1) {
-                    Toast.makeText(getApplicationContext(), latitude + " " + longitude, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), latitude + " " + longitude, Toast.LENGTH_SHORT).show();
 
                     EditText e1 = (EditText) findViewById(R.id.input_donationDate);
                     String lastDonate = e1.getText().toString();
@@ -124,33 +125,11 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
 //                } catch (Exception e) {
 //                    e.printStackTrace();
 //                }
-                post(params[0]);
+//                post(params[0], "https://blooming-plateau-54995.herokuapp.com/donors.json");
+                post(params[0], API_URL + "donors.json");
+
                 return null;
             }
-
-//            @Override
-//            protected void onPostExecute(Void) {
-//                super.onPostExecute(Void);
-////                try {
-////                    if (feedObject != null) {
-//////                        firstLoading.setVisibility(View.GONE);
-////                        feedList.clear();
-////                        JsonParser jsonParser = new JsonParser();
-////                        feedList.addAll(jsonParser.fetchPicDetails(feedObject));
-////                        Collections.reverse(feedList);
-////
-////                        firstLoading.setVisibility(View.GONE);
-////                        adapter.notifyDataSetChanged();
-////                    }
-//////                        ProgressDlg.hideProgressDialog();
-////                } catch (Exception e)
-////
-////                {
-////                    e.printStackTrace();
-////                }
-//                return null;
-//            }
-
 
         }.execute(peopleObj, null, null);
     }
