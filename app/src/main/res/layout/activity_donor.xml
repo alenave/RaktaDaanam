@@ -105,7 +105,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapWords"
-                android:hint="Date of birth(DD/MM/YYYY)" />
+                android:hint="Date of birth(DD/MM/YYYY)"
+                android:onClick="setDate"
+                />
         </android.support.design.widget.TextInputLayout>
 
         <!--  Blood group Label -->
@@ -122,8 +124,7 @@
             android:layout_height="40dp"
             android:background="@android:drawable/btn_dropdown"
             android:spinnerMode="dropdown"
-            android:dropDownWidth="fill_parent"
-            android:layout_alignParentLeft="true"
+            android:gravity="center"
             android:layout_below="@+id/bgLabel"/>
 
 

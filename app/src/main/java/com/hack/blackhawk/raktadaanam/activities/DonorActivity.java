@@ -14,10 +14,14 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.app.Dialog;
+import android.app.DatePickerDialog;
+import android.widget.DatePicker;
 
 import com.hack.blackhawk.raktadaanam.R;
 import com.hack.blackhawk.raktadaanam.models.People;
 import com.hack.blackhawk.raktadaanam.utils.GPSTracker;
+import com.hack.blackhawk.raktadaanam.utils.CustomDate;
 
 import org.json.JSONObject;
 
@@ -25,6 +29,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Calendar;
 
 import static com.hack.blackhawk.raktadaanam.utils.Request.post;
 
@@ -37,6 +42,8 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
     Spinner s1;
     String name, pass, dob, gender, bg;
     long mobile;
+    Calendar calendar;
+    int year, month, day;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,16 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setSelection(0);
         dropdown.setAdapter(adapter);
+        dropdown.setDropDownWidth(getWindowManager().getDefaultDisplay().getWidth());
+
+        //Date picker code start
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        //Date picker code end
+
 
 
         userName = (EditText) findViewById(R.id.input_name);
@@ -70,9 +87,41 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
+    @SuppressWarnings("deprecation")
+    public void setDate(View view) {
+        showDialog(999);
+        Toast.makeText(getApplicationContext(), "ca",
+                Toast.LENGTH_SHORT)
+                .show();
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        // TODO Auto-generated method stub
+        if (id == 999) {
+            return new DatePickerDialog(this,
+                    myDateListener, year, month, day);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener myDateListener = new
+            DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+                    showDate(arg1, arg2+1, arg3);
+                }
+     };
+
+    private void showDate(int year, int month, int day) {
+        dateOfBirth.setText(new StringBuilder().append(day).append("/")
+                .append(month).append("/").append(year));
+    }
+
+
 
     private boolean checkDob(String date) {
-        return date.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})") ? true : false;
+        return CustomDate.checkDateDDmmYYYY(date) ? true : false;
     }
 
     private boolean checkMobile(String mobile) {

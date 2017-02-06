@@ -1,12 +1,15 @@
 package com.hack.blackhawk.raktadaanam.activities;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -15,6 +18,7 @@ import com.google.gson.GsonBuilder;
 import com.hack.blackhawk.raktadaanam.R;
 import com.hack.blackhawk.raktadaanam.models.Location;
 import com.hack.blackhawk.raktadaanam.models.People;
+import com.hack.blackhawk.raktadaanam.utils.CustomDate;
 import com.hack.blackhawk.raktadaanam.utils.GPSTracker;
 
 import org.json.JSONObject;
@@ -34,6 +38,9 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
     private People people =  new People();
     private double latitude;
     private double longitude;
+    EditText lastDanationDate;
+    Calendar calendar;
+    int year, month, day;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +50,18 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
         people = (People) getIntent().getSerializableExtra("People");
         Button b1 = (Button) findViewById(R.id.donorContinue);
         b1.setOnClickListener(this);
+        lastDanationDate = (EditText) findViewById(R.id.input_donationDate);
+        //Date picker code start
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        //Date picker code end
     }
 
     private boolean checkDob(String date) {
-        return date.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})") ? true : false;
+        return CustomDate.checkDateDDmmYYYY(date) ? true : false;
     }
 
     @Override
@@ -58,9 +73,7 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
                 longitude = gps.getLongitude();
                 if (latitude > 1 && longitude > 1) {
 //                    Toast.makeText(getApplicationContext(), latitude + " " + longitude, Toast.LENGTH_SHORT).show();
-
-                    EditText e1 = (EditText) findViewById(R.id.input_donationDate);
-                    String lastDonate = e1.getText().toString();
+                    String lastDonate = lastDanationDate.getText().toString();
                     Date last_donation_date = new Date();
                     if ("".equalsIgnoreCase(lastDonate) || !checkDob(lastDonate)) {
                         Date today = new Date();
@@ -134,5 +147,37 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
         }.execute(peopleObj, null, null);
     }
 
+    //Code for datePicker start
+    @SuppressWarnings("deprecation")
+    public void setLastDonationDate(View view) {
+        showDialog(999);
+        Toast.makeText(getApplicationContext(), "ca",
+                Toast.LENGTH_SHORT)
+                .show();
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        // TODO Auto-generated method stub
+        if (id == 999) {
+            return new DatePickerDialog(this,
+                    myDateListener, year, month, day);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener myDateListener = new
+            DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+                    showDate(arg1, arg2+1, arg3);
+                }
+            };
+
+    private void showDate(int year, int month, int day) {
+        lastDanationDate.setText(new StringBuilder().append(day).append("/")
+                .append(month).append("/").append(year));
+    }
+    //code for datePicker end
 
 }
