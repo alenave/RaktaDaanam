@@ -37,6 +37,7 @@ public class NeedBloodGroup extends AppCompatActivity implements View.OnClickLis
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setSelection(0);
         dropdown.setAdapter(adapter);
+        dropdown.setDropDownWidth(getWindowManager().getDefaultDisplay().getWidth());
         b1 = (Button) findViewById(R.id.needContinue);
         s1 = (Spinner) findViewById(R.id.needbloodGroup);
         b1.setOnClickListener(this);
