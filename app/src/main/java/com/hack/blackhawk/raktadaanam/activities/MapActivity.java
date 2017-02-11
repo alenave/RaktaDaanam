@@ -8,25 +8,19 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.provider.VoicemailContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,10 +31,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hack.blackhawk.raktadaanam.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import static android.support.v7.app.AlertDialog.Builder;
-import static com.hack.blackhawk.raktadaanam.utils.Request.post;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnMarkerClickListener {
 
@@ -50,7 +45,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Location mLastLocation;
     private TextView textView;
     private LocationManager lm;
-//    private Intent intent;
+    //    private Intent intent;
     String blood_group;
 //    private ImageView imageView;
 
@@ -58,11 +53,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-//        blood_group = getIntent().getStringExtra("blood_group");
-//        imageView = (ImageView) findViewById(R.id.marker);
+        blood_group = getIntent().getStringExtra("blood_group");
         permission();
 
-//        textView = (TextView) findViewById(R.id.text);
 
         try {
             // Loading map
@@ -217,35 +210,42 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     mGoogleApiClient);
         }
         if (mLastLocation != null) {
-//            LatLng center = googleMap.getCameraPosition().target;
-//            textView.setText(String.valueOf(mLastLocation.getLatitude()));
             googleMap.addCircle(new CircleOptions()
                     .center(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))
                     .radius(10000)
                     .strokeColor(Color.RED));
             LatLng pinPoint = null;
             pinPoint = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-
-//            String reqBody = "{lat:" + mLastLocation.getLatitude() + ", lng:" +mLastLocation.getLongitude() + "blood_group: " + blood_group + "}";
-//            postCall(reqBody);
-            googleMap.addMarker(new MarkerOptions().position(pinPoint).title("Donor").snippet("Mobile: 9986756538").icon(BitmapDescriptorFactory.fromResource(R.mipmap.green))).setTag(0);
-            setMarkerForDonor();
+            googleMap.addMarker(new MarkerOptions().position(pinPoint).title("Receiver").icon(BitmapDescriptorFactory.fromResource(R.mipmap.green))).setTag(0);
+            try {
+                setMarkerForDonor();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             // Set a listener for marker click.
             googleMap.setOnMarkerClickListener(this);
 
         }
     }
 
-    private void setMarkerForDonor() {
-        LatLng pinPoint1, pinPoint2, pinPoint3;
-        pinPoint1 = new LatLng(13.0533, 80.26);
-        googleMap.addMarker(new MarkerOptions().position(pinPoint1).title("Donor").snippet("Mobile: 9986756538").icon(BitmapDescriptorFactory.fromResource(R.mipmap.red))).setTag(0);
-        pinPoint2 = new LatLng(13.0533, 80.2601);
-        googleMap.addMarker(new MarkerOptions().position(pinPoint2).title("Donor").snippet("Mobile: 7667977404").icon(BitmapDescriptorFactory.fromResource(R.mipmap.red))).setTag(0);
-        pinPoint3 = new LatLng(13.0533, 80.261);
-        googleMap.addMarker(new MarkerOptions().position(pinPoint3).title("Donor").snippet("Mobile: 8951272242").icon(BitmapDescriptorFactory.fromResource(R.mipmap.red))).setTag(0);
-
+    private void setMarkerForDonor() throws JSONException {
+        JSONObject jsonObject = NeedBloodGroup.jsonObjectOfDonors;
+        if (jsonObject != null) {
+            try {
+                if (jsonObject.has("donors")) {
+                    JSONArray jsonArray = jsonObject.getJSONArray("donors");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jo = (JSONObject) jsonArray.get(i);
+                        LatLng pinPoint1 = new LatLng(jo.getDouble("latitude"), jo.getDouble("longitude"));
+                        googleMap.addMarker(new MarkerOptions().position(pinPoint1).title("Donor: " + jo.getString("name")).snippet("Mobile: " + jo.getString("mobile_number")).icon(BitmapDescriptorFactory.fromResource(R.mipmap.red))).setTag(0);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+        }
     }
+
+}
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
@@ -255,63 +255,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Check if a click count was set, then display the click count.
         if (clickCount != null) {
-//            clickCount = clickCount + 1;
-//            marker.setTag(clickCount);
             marker.showInfoWindow();
-//            Toast.makeText(this,
-//                    marker.getTitle() +
-//                            " has been clicked " + clickCount + " times.",
 
         }
         return false;
     }
-//    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
-//
-//        View customMarkerView = ((LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_custom_marker, null);
-//        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
-//        markerImageView.setImageResource(resId);
-//        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-//        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
-//        customMarkerView.buildDrawingCache();
-//        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(),
-//                Bitmap.Config.ARGB_8888);
-//        Canvas canvas = new Canvas(returnedBitmap);
-//        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
-//        Drawable drawable = customMarkerView.getBackground();
-//        if (drawable != null)
-//            drawable.draw(canvas);
-//        customMarkerView.draw(canvas);
-//        return returnedBitmap;
-//    }
 
     @Override
     public void onConnectionSuspended(int i) {
 
-    }
-
-    JSONObject jsonObject_;
-
-    public void postCall(String peopleObj) {
-
-        new AsyncTask<String, Void, JSONObject>() {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-//                ProgressDlg.showProgressDialog(getContext(), "प्रतीक्षा करें...");
-            }
-
-            @Override
-            protected JSONObject doInBackground(String... params) {
-                return post(params[0], "https://blooming-plateau-54995.herokuapp.com/get_donors.json");
-            }
-
-            @Override
-            protected void onPostExecute(JSONObject jsonObject) {
-                super.onPostExecute(jsonObject);
-                jsonObject_ = jsonObject;
-//                Log.d("lat long", jsonObject_.toString());
-            }
-        }.execute(peopleObj, null, null);
     }
 
 }

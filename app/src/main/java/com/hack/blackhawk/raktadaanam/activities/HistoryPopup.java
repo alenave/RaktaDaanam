@@ -20,9 +20,6 @@ import com.hack.blackhawk.raktadaanam.models.Location;
 import com.hack.blackhawk.raktadaanam.models.People;
 import com.hack.blackhawk.raktadaanam.utils.CustomDate;
 import com.hack.blackhawk.raktadaanam.utils.GPSTracker;
-
-import org.json.JSONObject;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,12 +27,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static android.widget.Toast.LENGTH_SHORT;
 import static com.hack.blackhawk.raktadaanam.utils.Config.API_URL;
 import static com.hack.blackhawk.raktadaanam.utils.Request.post;
 
 
 public class HistoryPopup extends AppCompatActivity implements View.OnClickListener {
-    private People people =  new People();
+    private People people = new People();
     private double latitude;
     private double longitude;
     EditText lastDanationDate;
@@ -72,6 +70,9 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
                 latitude = gps.getLatitude();
                 longitude = gps.getLongitude();
                 if (latitude > 1 && longitude > 1) {
+
+//                    EditText e1 = (EditText) findViewById(R.id.input_donationDate);
+//                    String lastDonate = e1.getText().toString();
 //                    Toast.makeText(getApplicationContext(), latitude + " " + longitude, Toast.LENGTH_SHORT).show();
                     String lastDonate = lastDanationDate.getText().toString();
                     Date last_donation_date = new Date();
@@ -110,14 +111,11 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
     }
 
     private String createJSONBody(People people) {
-//        Gson gson = new Gson();
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         String jsonInString = gson.toJson(people);
         return jsonInString;
 
     }
-
-
 
 
     public void postCall(String peopleObj) {
@@ -126,19 +124,10 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-//                ProgressDlg.showProgressDialog(getContext(), "प्रतीक्षा करें...");
             }
 
             @Override
             protected Void doInBackground(String... params) {
-//                try {
-//                    JsonParser jsonParser = new JsonParser();
-//                    JSONObject feedObject = jsonParser.parsing(Config.API_URL + "pics.json");
-//                    return feedObject;
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                post(params[0], "https://blooming-plateau-54995.herokuapp.com/donors.json");
                 post(params[0], API_URL + "donors.json");
 
                 return null;
@@ -151,9 +140,7 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
     @SuppressWarnings("deprecation")
     public void setLastDonationDate(View view) {
         showDialog(999);
-        Toast.makeText(getApplicationContext(), "ca",
-                Toast.LENGTH_SHORT)
-                .show();
+//        Toast.makeText(getApplicationContext(), "ca", LENGTH_SHORT).show();
     }
 
     @Override
