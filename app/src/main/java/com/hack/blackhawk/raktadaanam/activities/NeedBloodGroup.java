@@ -8,18 +8,25 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.hack.blackhawk.raktadaanam.R;
 
 import com.hack.blackhawk.raktadaanam.utils.GPSTracker;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static com.hack.blackhawk.raktadaanam.utils.Config.API_URL;
+import static com.hack.blackhawk.raktadaanam.utils.Request.getDonors;
 import static com.hack.blackhawk.raktadaanam.utils.Request.post;
 
 public class NeedBloodGroup extends AppCompatActivity implements View.OnClickListener {
 
     Button b1;
     Spinner s1;
+    static JSONObject jsonObjectOfDonors;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,26 +43,17 @@ public class NeedBloodGroup extends AppCompatActivity implements View.OnClickLis
     }
 
 
-    public void postCall(String peopleObj) {
+    public void postCall(JSONObject peopleObj) {
 
-        new AsyncTask<String, Void, Void>() {
+        new AsyncTask<JSONObject, Void, Void>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-//                ProgressDlg.showProgressDialog(getContext(), "प्रतीक्षा करें...");
             }
 
             @Override
-            protected Void doInBackground(String... params) {
-//                try {
-//                    JsonParser jsonParser = new JsonParser();
-//                    JSONObject feedObject = jsonParser.parsing(Config.API_URL + "pics.json");
-//                    return feedObject;
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                post(params[0], "https://blooming-plateau-54995.herokuapp.com/donors.json");
-                post(params[0], API_URL + "get_donors.json");
+            protected Void doInBackground(JSONObject... params) {
+                jsonObjectOfDonors = getDonors(params[0], API_URL + "get_donors.json");
 
                 return null;
             }
@@ -70,14 +68,19 @@ public class NeedBloodGroup extends AppCompatActivity implements View.OnClickLis
                 Intent intent = new Intent(NeedBloodGroup.this, MapActivity.class);
                 String bg = s1.getSelectedItem().toString();
                 if (!bg.equalsIgnoreCase("--Select--")) {
-//                    intent.putExtra("blood_group", bg);
                     GPSTracker gps = new GPSTracker(this);
                     double latitude = gps.getLatitude();
                     double longitude = gps.getLongitude();
-                    String jsonString = "{\"lat\":" + latitude + ",\"lng\":" + longitude + ",\"blood_group\":" + bg + "}";
 //                    Toast.makeText(getApplicationContext(), latitude + " " + longitude, Toast.LENGTH_SHORT).show();
-
-                    postCall(jsonString);
+                    JSONObject reqBody = new JSONObject();
+                    try {
+                        reqBody.put("lat", latitude);
+                        reqBody.put("lng", longitude);
+                        reqBody.put("blood_group", bg);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    postCall(reqBody);
                     startActivity(intent);
                 }
                 break;
