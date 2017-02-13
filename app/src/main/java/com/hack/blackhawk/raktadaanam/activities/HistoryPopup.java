@@ -1,9 +1,9 @@
 package com.hack.blackhawk.raktadaanam.activities;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,14 +12,19 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.hack.blackhawk.raktadaanam.MainActivity;
 import com.hack.blackhawk.raktadaanam.R;
 import com.hack.blackhawk.raktadaanam.models.Location;
 import com.hack.blackhawk.raktadaanam.models.People;
 import com.hack.blackhawk.raktadaanam.utils.CustomDate;
 import com.hack.blackhawk.raktadaanam.utils.GPSTracker;
+import com.hack.blackhawk.raktadaanam.utils.ProgressDlg;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,13 +37,16 @@ import static com.hack.blackhawk.raktadaanam.utils.Config.API_URL;
 import static com.hack.blackhawk.raktadaanam.utils.Request.post;
 
 
-public class HistoryPopup extends AppCompatActivity implements View.OnClickListener {
+
+public class HistoryPopup extends AppCompatActivity implements View.OnClickListener, com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateSetListener {
     private People people = new People();
     private double latitude;
     private double longitude;
     EditText lastDanationDate;
     Calendar calendar;
     int year, month, day;
+    com.wdullaer.materialdatetimepicker.date.DatePickerDialog datePickerDialog ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +63,7 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
 
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
+        lastDanationDate.setOnClickListener(this);
         //Date picker code end
     }
 
@@ -70,10 +79,6 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
                 latitude = gps.getLatitude();
                 longitude = gps.getLongitude();
                 if (latitude > 1 && longitude > 1) {
-
-//                    EditText e1 = (EditText) findViewById(R.id.input_donationDate);
-//                    String lastDonate = e1.getText().toString();
-//                    Toast.makeText(getApplicationContext(), latitude + " " + longitude, Toast.LENGTH_SHORT).show();
                     String lastDonate = lastDanationDate.getText().toString();
                     Date last_donation_date = new Date();
                     if ("".equalsIgnoreCase(lastDonate) || !checkDob(lastDonate)) {
@@ -96,18 +101,28 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
                     Location location = new Location(latitude, longitude);
                     people.setLocation(location);
                     String requestBody = createJSONBody(people);
-//get location
-//success!
-                    AlertDialog.Builder builder = new AlertDialog.Builder(HistoryPopup.this);
-                    builder.setMessage("Doner request send")
-                            .setTitle("Doner request send")
-                            .setPositiveButton("Ok", null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
                     postCall(requestBody);
                 }
                 break;
+            case R.id.input_donationDate :
+                datePickerDialog = com.wdullaer.materialdatetimepicker.date.DatePickerDialog.newInstance(HistoryPopup.this, year, month, day);
+
+                datePickerDialog.setThemeDark(false);
+
+                datePickerDialog.showYearPickerFirst(false);
+
+                datePickerDialog.setAccentColor(Color.parseColor("#009688"));
+
+                datePickerDialog.setTitle("last doneted");
+
+                datePickerDialog.show(getFragmentManager(), "DatePickerDialog");
+                break;
         }
+    }
+
+    @Override
+    public void onDateSet(com.wdullaer.materialdatetimepicker.date.DatePickerDialog view, int Year, int Month, int Day) {
+        setDate(Day, Month, Year);
     }
 
     private String createJSONBody(People people) {
@@ -120,51 +135,41 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
 
     public void postCall(String peopleObj) {
 
-        new AsyncTask<String, Void, Void>() {
+        new AsyncTask<String, Void, JSONObject>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                ProgressDlg.showProgressDialog(HistoryPopup.this, "Please wait");
             }
 
             @Override
-            protected Void doInBackground(String... params) {
-                post(params[0], API_URL + "donors.json");
-
-                return null;
+            protected JSONObject doInBackground(String... params) {
+                return post(params[0], API_URL + "donors.json");
             }
 
+            @Override
+            protected void onPostExecute(JSONObject jsonObject) {
+                super.onPostExecute(jsonObject);
+                try {
+                    if(jsonObject.getBoolean("success")) {
+                        ProgressDlg.hideProgressDialog();
+                        Intent intent = new Intent(HistoryPopup.this, MainActivity.class);
+                        Toast.makeText(getApplicationContext(), "You become a donor", LENGTH_SHORT).show();
+                        startActivity(intent);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }.execute(peopleObj, null, null);
     }
 
-    //Code for datePicker start
-    @SuppressWarnings("deprecation")
-    public void setLastDonationDate(View view) {
-        showDialog(999);
-//        Toast.makeText(getApplicationContext(), "ca", LENGTH_SHORT).show();
-    }
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        // TODO Auto-generated method stub
-        if (id == 999) {
-            return new DatePickerDialog(this,
-                    myDateListener, year, month, day);
-        }
-        return null;
-    }
-
-    private DatePickerDialog.OnDateSetListener myDateListener = new
-            DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
-                    showDate(arg1, arg2+1, arg3);
-                }
-            };
-
-    private void showDate(int year, int month, int day) {
+    private void setDate(int day, int month, int year) {
         lastDanationDate.setText(new StringBuilder().append(day).append("/")
                 .append(month).append("/").append(year));
     }
+
     //code for datePicker end
 
 }

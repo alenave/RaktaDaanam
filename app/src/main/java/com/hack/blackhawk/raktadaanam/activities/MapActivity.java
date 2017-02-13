@@ -1,6 +1,7 @@
 package com.hack.blackhawk.raktadaanam.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,12 +9,14 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
@@ -29,6 +32,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.hack.blackhawk.raktadaanam.MainActivity;
 import com.hack.blackhawk.raktadaanam.R;
 
 import org.json.JSONArray;
@@ -67,7 +71,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
 
 
-        checkLocationOn();
+//        checkLocationOn();
     }
 
     private void checkLocationOn() {
@@ -194,6 +198,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             ActivityCompat.requestPermissions(MapActivity.this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MapActivity.this,
+                    new String[]{Manifest.permission.CALL_PHONE}, 1);
+        }
     }
 
     @Override
@@ -242,10 +252,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            }
         }
+
     }
 
-}
+    public static final int REQUEST_PERMISSION = 99;
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
@@ -256,8 +268,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Check if a click count was set, then display the click count.
         if (clickCount != null) {
             marker.showInfoWindow();
+            if(marker.isInfoWindowShown()) {
+                callDonor(marker);
+            }
 
         }
+
         return false;
     }
 
@@ -266,4 +282,30 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
+    public void callDonor(final Marker marker) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Call " + marker.getTitle().substring(7));
+        alertDialog.setCancelable(false);
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + marker.getSnippet().substring(8)));
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MapActivity.this,
+                            new String[]{Manifest.permission.CALL_PHONE},
+                            REQUEST_PERMISSION);
+                } else {
+                    startActivity(callIntent);
+
+                }
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialog.show();
+    }
 }

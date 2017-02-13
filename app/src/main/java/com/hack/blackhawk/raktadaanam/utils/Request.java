@@ -17,7 +17,7 @@ public class Request {
 
         int httpResult = 0;
         HttpURLConnection con = null;
-        JSONObject jo = null;
+        JSONObject json = new JSONObject();
         try {
             URL url = new URL(urlForAPI);
             con = (HttpURLConnection) url.openConnection();
@@ -32,28 +32,16 @@ public class Request {
             wr.flush();
             httpResult = con.getResponseCode();
             String msg = "";
-            Object json = null;
             if (httpResult == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                StringBuilder resp = new StringBuilder();
-                String respline = "";
-                while ((respline = in.readLine()) != null) {
-                    resp.append(respline);
-                }
-                msg = resp.toString();
-                in.close();
-                System.out.println("Response: "+msg);
-                json = new JSONTokener(msg).nextValue();
-                jo = (JSONObject) json;
-                if (!jo.has("success")) {
-                    jo.put("success", true);
+                if (!json.has("success")) {
+                    json.put("success", true);
                 }
             }
         }catch(Exception e) {
             Log.d("Exception caught" , e.toString());
         }
-        System.out.print("JO" + jo);
-        return jo;
+        System.out.print("JO" + json);
+        return json;
     }
 
 
@@ -86,7 +74,7 @@ public class Request {
                 }
                 msg = resp.toString();
                 in.close();
-                System.out.println("Response: "+msg);
+//                System.out.println("Response: "+msg);
                 json = new JSONTokener(msg).nextValue();
                 jo = (JSONObject) json;
                 if (!jo.has("success")) {
@@ -96,7 +84,7 @@ public class Request {
         }catch(Exception e) {
             Log.d("Exception caught" , e.toString());
         }
-        System.out.print("JO" + jo);
+//        System.out.print("JO" + jo);
         return jo;
     }
 }

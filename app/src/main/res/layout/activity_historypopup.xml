@@ -27,7 +27,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text=" Did you donated before ? if so please provide date. "
+            android:text="Have you donated blood before, \nif so when?"
             android:textSize="18dp"
             android:textAlignment="gravity" />
 
@@ -41,6 +41,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapWords"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:clickable="true"
                 android:hint="Last donation date(dd/mm/yyyy)"
                 android:onClick="setLastDonationDate"/>
         </android.support.design.widget.TextInputLayout>

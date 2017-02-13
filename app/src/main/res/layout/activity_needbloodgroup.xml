@@ -26,7 +26,7 @@
         <TextView android:id="@+id/needbgLabel"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Need blood group for"
+            android:text="Need blood for"
             android:textSize="18dp"
             android:textAlignment="gravity"/>
         <Spinner

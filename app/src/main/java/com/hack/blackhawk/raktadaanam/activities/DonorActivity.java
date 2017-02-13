@@ -1,56 +1,55 @@
 package com.hack.blackhawk.raktadaanam.activities;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.graphics.Color;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.app.Dialog;
-import android.app.DatePickerDialog;
-import android.widget.DatePicker;
 
 import com.hack.blackhawk.raktadaanam.R;
 import com.hack.blackhawk.raktadaanam.models.People;
-import com.hack.blackhawk.raktadaanam.utils.GPSTracker;
 import com.hack.blackhawk.raktadaanam.utils.CustomDate;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
-import org.json.JSONObject;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Calendar;
 
-import static com.hack.blackhawk.raktadaanam.utils.Request.post;
 
-
-public class DonorActivity extends AppCompatActivity implements View.OnClickListener {
+public class DonorActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
     Button b1;
-    EditText userName, password, mobile_number, dateOfBirth;
+    EditText userName, password, mobile_number;
+    EditText dateOfBirth;
     RadioGroup r1;
     Spinner s1;
     String name, pass, dob, gender, bg;
     long mobile;
     Calendar calendar;
     int year, month, day;
+    DatePickerDialog datePickerDialog ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donor);
+        checkLocationOn();
         Spinner dropdown = (Spinner) findViewById(R.id.blood_group);
-        String[] items = new String[]{"--Select--", "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"};
+        String[] items = new String[]{"--Blood Group--", "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setSelection(0);
         dropdown.setAdapter(adapter);
@@ -69,51 +68,25 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
         userName = (EditText) findViewById(R.id.input_name);
         password = (EditText) findViewById(R.id.input_password);
         mobile_number = (EditText) findViewById(R.id.mobile_no);
-        dateOfBirth = (EditText) findViewById(R.id.input_dob);
+        dateOfBirth = (EditText) findViewById(R.id.dob);
         r1 = (RadioGroup) findViewById(R.id.radioGrp);
         s1 = (Spinner) findViewById(R.id.blood_group);
 
         b1 = (Button) findViewById(R.id.donorRegistration);
         b1.setOnClickListener(this);
+        dateOfBirth.setOnClickListener(this);
 
-        TextView t1 = (TextView) findViewById(R.id.alredyDonor);
-        t1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(DonorActivity.this, LoginActivity.class);
-                startActivity(intent, null);
-            }
-        });
+//        TextView t1 = (TextView) findViewById(R.id.alredyDonor);
+//        t1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(DonorActivity.this, LoginActivity.class);
+//                startActivity(intent, null);
+//            }
+//        });
     }
 
-
-    @SuppressWarnings("deprecation")
-    public void setDate(View view) {
-        showDialog(999);
-        Toast.makeText(getApplicationContext(), "ca",
-                Toast.LENGTH_SHORT)
-                .show();
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        // TODO Auto-generated method stub
-        if (id == 999) {
-            return new DatePickerDialog(this,
-                    myDateListener, year, month, day);
-        }
-        return null;
-    }
-
-    private DatePickerDialog.OnDateSetListener myDateListener = new
-            DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
-                    showDate(arg1, arg2+1, arg3);
-                }
-     };
-
-    private void showDate(int year, int month, int day) {
+    private void setDate(int day, int month, int year) {
         dateOfBirth.setText(new StringBuilder().append(day).append("/")
                 .append(month).append("/").append(year));
     }
@@ -152,7 +125,7 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
                     sendRequest = true;
                 }
                 //check present blood group
-                if (sendRequest && bg.equalsIgnoreCase("--Select--")) {
+                if (sendRequest && bg.equalsIgnoreCase("--Blood Group--")) {
                     sendRequest = false;
                 }
                 //check if date is correct
@@ -177,8 +150,69 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
                     dialog.show();
                 }
                 break;
+
+            case R.id.dob :
+                datePickerDialog = DatePickerDialog.newInstance(DonorActivity.this, year, month, day);
+
+                datePickerDialog.setThemeDark(false);
+
+                datePickerDialog.showYearPickerFirst(false);
+
+                datePickerDialog.setAccentColor(Color.parseColor("#009688"));
+
+                datePickerDialog.setTitle("date of birth");
+
+                datePickerDialog.show(getFragmentManager(), "DatePickerDialog");
+                break;
         }
 
+
+    }
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int Year, int Month, int Day) {
+        setDate(Day, Month, Year);
+    }
+
+
+    private void checkLocationOn() {
+        LocationManager lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        if (!gps_enabled && !network_enabled) {
+            // notify user
+            android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(this);
+            dialog.setMessage(getApplicationContext().getResources().getString(R.string.gps_network_not_enabled));
+            dialog.setPositiveButton(getApplicationContext().getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(myIntent);
+                    //get gps
+                }
+            });
+            dialog.setNegativeButton(getApplicationContext().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+
+                }
+            });
+            dialog.show();
+        }
 
     }
 }
