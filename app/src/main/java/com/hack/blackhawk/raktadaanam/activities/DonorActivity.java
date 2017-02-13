@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -21,6 +22,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hack.blackhawk.raktadaanam.R;
 import com.hack.blackhawk.raktadaanam.models.People;
@@ -75,6 +77,7 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
         b1 = (Button) findViewById(R.id.donorRegistration);
         b1.setOnClickListener(this);
         dateOfBirth.setOnClickListener(this);
+        mobile_number.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
 //        TextView t1 = (TextView) findViewById(R.id.alredyDonor);
 //        t1.setOnClickListener(new View.OnClickListener() {
@@ -87,8 +90,12 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void setDate(int day, int month, int year) {
-        dateOfBirth.setText(new StringBuilder().append(day).append("/")
-                .append(month).append("/").append(year));
+        if(calendar.get(Calendar.YEAR) - year > 17) {
+            dateOfBirth.setText(new StringBuilder().append(day).append("/")
+                    .append(month).append("/").append(year));
+        } else {
+            Toast.makeText(getApplicationContext(), "Too young to donate", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -143,8 +150,7 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
                 } else {
                     //fail!
                     AlertDialog.Builder builder = new AlertDialog.Builder(DonorActivity.this);
-                    builder.setMessage("Error")
-                            .setTitle("Please fill all the entries correctly")
+                    builder.setTitle("Please fill your the entries correctly")
                             .setPositiveButton("Ok", null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
@@ -152,6 +158,7 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.dob :
+                mobile_number.clearFocus();
                 datePickerDialog = DatePickerDialog.newInstance(DonorActivity.this, year, month, day);
 
                 datePickerDialog.setThemeDark(false);

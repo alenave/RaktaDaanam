@@ -1,7 +1,6 @@
 package com.hack.blackhawk.raktadaanam.activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,7 +31,6 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.hack.blackhawk.raktadaanam.MainActivity;
 import com.hack.blackhawk.raktadaanam.R;
 
 import org.json.JSONArray;
@@ -190,13 +188,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MapActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        }
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MapActivity.this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CALL_PHONE)
