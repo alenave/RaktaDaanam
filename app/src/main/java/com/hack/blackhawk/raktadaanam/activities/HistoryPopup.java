@@ -113,7 +113,7 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
 
                 datePickerDialog.setAccentColor(Color.parseColor("#009688"));
 
-                datePickerDialog.setTitle("last doneted");
+                datePickerDialog.setTitle("last donated");
 
                 datePickerDialog.show(getFragmentManager(), "DatePickerDialog");
                 break;
@@ -139,7 +139,7 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                ProgressDlg.showProgressDialog(HistoryPopup.this, "Please wait");
+                ProgressDlg.showProgressDialog(HistoryPopup.this, "Please wait...");
             }
 
             @Override
@@ -154,7 +154,7 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
                     if(jsonObject.getBoolean("success")) {
                         ProgressDlg.hideProgressDialog();
                         Intent intent = new Intent(HistoryPopup.this, MainActivity.class);
-                        Toast.makeText(getApplicationContext(), "You become a donor", LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Successfully registered as donor", LENGTH_SHORT).show();
                         startActivity(intent);
                     }
                 } catch (JSONException e) {

@@ -1,12 +1,9 @@
 package com.hack.blackhawk.raktadaanam;
 
-import android.*;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -19,13 +16,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.google.android.gms.vision.text.Line;
 import com.hack.blackhawk.raktadaanam.activities.DonorActivity;
-import com.hack.blackhawk.raktadaanam.activities.MapActivity;
 import com.hack.blackhawk.raktadaanam.activities.NeedBloodGroup;
 import com.hack.blackhawk.raktadaanam.utils.InternetConnection;
-
-import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Button b1, b2;
@@ -137,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     new String[]{android.Manifest.permission.INTERNET},
                     1);
         }
-
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_NETWORK_STATE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -149,13 +141,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        }
-
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.CALL_PHONE)
