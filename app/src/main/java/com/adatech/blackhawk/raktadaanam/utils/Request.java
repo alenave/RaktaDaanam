@@ -1,4 +1,4 @@
-package com.hack.blackhawk.raktadaanam.utils;
+package com.adatech.blackhawk.raktadaanam.utils;
 
 import android.util.Log;
 

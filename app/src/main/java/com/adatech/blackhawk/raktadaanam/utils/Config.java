@@ -1,4 +1,4 @@
-package com.hack.blackhawk.raktadaanam.utils;
+package com.adatech.blackhawk.raktadaanam.utils;
 
 /**
  * Created by alenave on 16/07/16.

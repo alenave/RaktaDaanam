@@ -1,4 +1,4 @@
-package com.hack.blackhawk.raktadaanam.models;
+package com.adatech.blackhawk.raktadaanam.models;
 
 import java.io.Serializable;
 import java.util.Date;
