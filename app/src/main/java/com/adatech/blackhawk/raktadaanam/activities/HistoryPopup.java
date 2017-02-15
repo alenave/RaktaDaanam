@@ -1,7 +1,5 @@
-package com.hack.blackhawk.raktadaanam.activities;
+package com.adatech.blackhawk.raktadaanam.activities;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -9,18 +7,18 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.adatech.blackhawk.raktadaanam.MainActivity;
+import com.adatech.blackhawk.raktadaanam.R;
+import com.adatech.blackhawk.raktadaanam.models.Location;
+import com.adatech.blackhawk.raktadaanam.models.People;
+import com.adatech.blackhawk.raktadaanam.utils.LocationOn;
+import com.adatech.blackhawk.raktadaanam.utils.CustomDate;
+import com.adatech.blackhawk.raktadaanam.utils.ProgressDlg;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.hack.blackhawk.raktadaanam.MainActivity;
-import com.hack.blackhawk.raktadaanam.R;
-import com.hack.blackhawk.raktadaanam.models.Location;
-import com.hack.blackhawk.raktadaanam.models.People;
-import com.hack.blackhawk.raktadaanam.utils.CustomDate;
-import com.hack.blackhawk.raktadaanam.utils.GPSTracker;
-import com.hack.blackhawk.raktadaanam.utils.ProgressDlg;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,8 +31,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static android.widget.Toast.LENGTH_SHORT;
-import static com.hack.blackhawk.raktadaanam.utils.Config.API_URL;
-import static com.hack.blackhawk.raktadaanam.utils.Request.post;
+import static com.adatech.blackhawk.raktadaanam.utils.Config.API_URL;
+import static com.adatech.blackhawk.raktadaanam.utils.Request.post;
 
 
 
@@ -75,11 +73,11 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.donorContinue:
-                GPSTracker gps = new GPSTracker(this);
-                latitude = gps.getLatitude();
-                longitude = gps.getLongitude();
+                latitude = LocationOn.getInstance(this).getLatitude();
+                longitude = LocationOn.getInstance(this).getLongitude();
                 if (latitude > 1 && longitude > 1) {
                     String lastDonate = lastDanationDate.getText().toString();
+//                    Toast.makeText(getApplicationContext(),latitude + " " + longitude, LENGTH_SHORT ).show();
                     Date last_donation_date = new Date();
                     if ("".equalsIgnoreCase(lastDonate) || !checkDob(lastDonate)) {
                         Date today = new Date();
@@ -151,7 +149,7 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
             protected void onPostExecute(JSONObject jsonObject) {
                 super.onPostExecute(jsonObject);
                 try {
-                    if(jsonObject.getBoolean("success")) {
+                    if(jsonObject != null && jsonObject.getBoolean("success")) {
                         ProgressDlg.hideProgressDialog();
                         Intent intent = new Intent(HistoryPopup.this, MainActivity.class);
                         Toast.makeText(getApplicationContext(), "Successfully registered as donor", LENGTH_SHORT).show();

@@ -1,32 +1,24 @@
-package com.hack.blackhawk.raktadaanam.activities;
+package com.adatech.blackhawk.raktadaanam.activities;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hack.blackhawk.raktadaanam.R;
-import com.hack.blackhawk.raktadaanam.models.People;
-import com.hack.blackhawk.raktadaanam.utils.CustomDate;
+import com.adatech.blackhawk.raktadaanam.R;
+import com.adatech.blackhawk.raktadaanam.models.People;
+import com.adatech.blackhawk.raktadaanam.utils.LocationOn;
+import com.adatech.blackhawk.raktadaanam.utils.CustomDate;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
@@ -49,7 +41,7 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donor);
-        checkLocationOn();
+        LocationOn.getInstance(this).check();
         Spinner dropdown = (Spinner) findViewById(R.id.blood_group);
         String[] items = new String[]{"--Blood Group--", "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
@@ -179,47 +171,5 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onDateSet(DatePickerDialog view, int Year, int Month, int Day) {
         setDate(Day, Month, Year);
-    }
-
-
-    private void checkLocationOn() {
-        LocationManager lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        try {
-            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
-        }
-
-        try {
-            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch (Exception ex) {
-        }
-
-        if (!gps_enabled && !network_enabled) {
-            // notify user
-            android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(this);
-            dialog.setMessage(getApplicationContext().getResources().getString(R.string.gps_network_not_enabled));
-            dialog.setPositiveButton(getApplicationContext().getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(myIntent);
-                    //get gps
-                }
-            });
-            dialog.setNegativeButton(getApplicationContext().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-
-                }
-            });
-            dialog.show();
-        }
-
     }
 }

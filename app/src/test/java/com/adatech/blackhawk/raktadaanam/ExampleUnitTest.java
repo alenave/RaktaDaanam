@@ -1,4 +1,4 @@
-package com.hack.blackhawk.raktadaanam;
+package com.adatech.blackhawk.raktadaanam;
 
 import org.junit.Test;
 

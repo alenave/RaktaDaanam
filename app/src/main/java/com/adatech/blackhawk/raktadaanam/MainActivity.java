@@ -1,24 +1,22 @@
-package com.hack.blackhawk.raktadaanam;
+package com.adatech.blackhawk.raktadaanam;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.hack.blackhawk.raktadaanam.activities.DonorActivity;
-import com.hack.blackhawk.raktadaanam.activities.NeedBloodGroup;
-import com.hack.blackhawk.raktadaanam.utils.InternetConnection;
+import com.adatech.blackhawk.raktadaanam.activities.DonorActivity;
+import com.adatech.blackhawk.raktadaanam.activities.NeedBloodGroup;
+import com.adatech.blackhawk.raktadaanam.utils.LocationOn;
+import com.adatech.blackhawk.raktadaanam.utils.InternetConnection;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Button b1, b2;
@@ -38,19 +36,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             fullView.setVisibility(View.GONE);
             retry.setVisibility(View.VISIBLE);
         } else {
-            checkLocationOn();
+            LocationOn.getInstance(this).check();
             b1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(MainActivity.this, DonorActivity.class);
-                    startActivity(intent, null);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        startActivity(intent, null);
+                    }
                 }
             });
             b2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(MainActivity.this, NeedBloodGroup.class);
-                    startActivity(intent, null);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        startActivity(intent, null);
+                    }
                 }
             });
 
@@ -67,47 +69,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         retryButton.setOnClickListener(this);
     }
 
-
-    private void checkLocationOn() {
-        lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        try {
-            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
-        }
-
-        try {
-            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch (Exception ex) {
-        }
-
-        if (!gps_enabled && !network_enabled) {
-            // notify user
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setMessage(getApplicationContext().getResources().getString(R.string.gps_network_not_enabled));
-            dialog.setPositiveButton(getApplicationContext().getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(myIntent);
-                    //get gps
-                }
-            });
-            dialog.setNegativeButton(getApplicationContext().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-
-                }
-            });
-            dialog.show();
-        }
-
-    }
 
     @Override
     public void onClick(View view) {
