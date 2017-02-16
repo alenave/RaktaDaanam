@@ -1,4 +1,4 @@
-package com.adatech.blackhawk.raktadaanam.models;
+package com.hack.blackhawk.raktadaanam.models;
 
 
 public class Location {

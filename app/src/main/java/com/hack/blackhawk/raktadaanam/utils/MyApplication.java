@@ -1,4 +1,4 @@
-package com.adatech.blackhawk.raktadaanam.utils;
+package com.hack.blackhawk.raktadaanam.utils;
 
 import android.app.Application;
 import android.content.Context;

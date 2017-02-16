@@ -1,4 +1,4 @@
-package com.adatech.blackhawk.raktadaanam.activities;
+package com.hack.blackhawk.raktadaanam.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,13 +10,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.adatech.blackhawk.raktadaanam.MainActivity;
-import com.adatech.blackhawk.raktadaanam.R;
-import com.adatech.blackhawk.raktadaanam.models.Location;
-import com.adatech.blackhawk.raktadaanam.models.People;
-import com.adatech.blackhawk.raktadaanam.utils.LocationOn;
-import com.adatech.blackhawk.raktadaanam.utils.CustomDate;
-import com.adatech.blackhawk.raktadaanam.utils.ProgressDlg;
+import com.hack.blackhawk.raktadaanam.MainActivity;
+import com.hack.blackhawk.raktadaanam.R;
+import com.hack.blackhawk.raktadaanam.models.Location;
+import com.hack.blackhawk.raktadaanam.models.People;
+import com.hack.blackhawk.raktadaanam.utils.LocationOn;
+import com.hack.blackhawk.raktadaanam.utils.CustomDate;
+import com.hack.blackhawk.raktadaanam.utils.ProgressDlg;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -31,8 +31,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static android.widget.Toast.LENGTH_SHORT;
-import static com.adatech.blackhawk.raktadaanam.utils.Config.API_URL;
-import static com.adatech.blackhawk.raktadaanam.utils.Request.post;
+import static com.hack.blackhawk.raktadaanam.utils.Config.API_URL;
+import static com.hack.blackhawk.raktadaanam.utils.Request.post;
 
 
 
@@ -150,11 +150,13 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
                 super.onPostExecute(jsonObject);
                 try {
                     if(jsonObject != null && jsonObject.getBoolean("success")) {
-                        ProgressDlg.hideProgressDialog();
                         Intent intent = new Intent(HistoryPopup.this, MainActivity.class);
                         Toast.makeText(getApplicationContext(), "Successfully registered as donor", LENGTH_SHORT).show();
                         startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Something went wrong, please try again.", Toast.LENGTH_SHORT).show();
                     }
+                    ProgressDlg.hideProgressDialog();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -164,8 +166,16 @@ public class HistoryPopup extends AppCompatActivity implements View.OnClickListe
 
 
     private void setDate(int day, int month, int year) {
-        lastDanationDate.setText(new StringBuilder().append(day).append("/")
-                .append(month).append("/").append(year));
+        Date dob = new GregorianCalendar(year, month, day, 23, 59).getTime();
+        Date today = new Date();
+        int old = (int)((today.getTime() - dob.getTime()) / (1000 * 60 * 60 * 24));
+        if(old >= 0) {
+            lastDanationDate.setText(new StringBuilder().append(day).append("/")
+                    .append(month + 1).append("/").append(year));
+        } else {
+            lastDanationDate.setText("");
+            Toast.makeText(getApplicationContext(), "Last donation date can not be future date", Toast.LENGTH_SHORT).show();
+        }
     }
 
     //code for datePicker end
