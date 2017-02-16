@@ -1,4 +1,4 @@
-package com.adatech.blackhawk.raktadaanam;
+package com.hack.blackhawk.raktadaanam;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
