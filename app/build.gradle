@@ -21,8 +21,8 @@ android {
         applicationId "com.hack.blackhawk.raktadaanam"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0.1"
+        versionCode 4
+        versionName "1.0.4"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -49,4 +49,8 @@ dependencies {
         transitive = true;
     }
     compile 'com.android.support:multidex:1.0.1'
+    compile 'com.google.firebase:firebase-messaging:10.0.1'
+    compile 'com.google.firebase:firebase-core:10.0.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

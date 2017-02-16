@@ -1,4 +1,4 @@
-package com.adatech.blackhawk.raktadaanam.utils;
+package com.hack.blackhawk.raktadaanam.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

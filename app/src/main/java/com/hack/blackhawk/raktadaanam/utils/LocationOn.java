@@ -1,4 +1,4 @@
-package com.adatech.blackhawk.raktadaanam.utils;
+package com.hack.blackhawk.raktadaanam.utils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -14,7 +14,7 @@ import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
-import com.adatech.blackhawk.raktadaanam.R;
+import com.hack.blackhawk.raktadaanam.R;
 
 /**
  * Created by alenave on 15/02/17.
@@ -40,7 +40,8 @@ private static Activity activity;
         return instance;
     }
 
-    public void check() {
+    public boolean check() {
+//        Permission.check(activity);
         locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         try {
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -89,7 +90,10 @@ private static Activity activity;
             }
 
         }
-
+        if(isNetworkEnabled && isGPSEnabled) {
+            return true;
+        }
+        return false;
     }
 
     private void showDialog(final Activity activity){

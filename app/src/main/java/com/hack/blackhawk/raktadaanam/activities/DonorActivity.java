@@ -1,4 +1,4 @@
-package com.adatech.blackhawk.raktadaanam.activities;
+package com.hack.blackhawk.raktadaanam.activities;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -15,13 +15,15 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.adatech.blackhawk.raktadaanam.R;
-import com.adatech.blackhawk.raktadaanam.models.People;
-import com.adatech.blackhawk.raktadaanam.utils.LocationOn;
-import com.adatech.blackhawk.raktadaanam.utils.CustomDate;
+import com.hack.blackhawk.raktadaanam.R;
+import com.hack.blackhawk.raktadaanam.models.People;
+import com.hack.blackhawk.raktadaanam.utils.LocationOn;
+import com.hack.blackhawk.raktadaanam.utils.CustomDate;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 
 public class DonorActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
@@ -51,7 +53,7 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
 
         //Date picker code start
         calendar = Calendar.getInstance();
-        year = calendar.get(Calendar.YEAR);
+        year = calendar.get(Calendar.YEAR) - 18;
 
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -82,10 +84,14 @@ public class DonorActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void setDate(int day, int month, int year) {
-        if(calendar.get(Calendar.YEAR) - year > 17) {
+        Date dob = new GregorianCalendar(year, month, day).getTime();
+        Date today = new Date();
+        int old = (int)((today.getTime() - dob.getTime()) / (1000 * 60 * 60 * 24) - 4)/365;
+        if(old > 17) {
             dateOfBirth.setText(new StringBuilder().append(day).append("/")
-                    .append(month).append("/").append(year));
+                    .append(month+1).append("/").append(year));
         } else {
+            dateOfBirth.setText("");
             Toast.makeText(getApplicationContext(), "Too young to donate", Toast.LENGTH_SHORT).show();
         }
     }

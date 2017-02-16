@@ -1,4 +1,4 @@
-package com.adatech.blackhawk.raktadaanam.activities;
+package com.hack.blackhawk.raktadaanam.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -8,16 +8,17 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
-import com.adatech.blackhawk.raktadaanam.R;
-import com.adatech.blackhawk.raktadaanam.utils.LocationOn;
-import com.adatech.blackhawk.raktadaanam.utils.ProgressDlg;
+import com.hack.blackhawk.raktadaanam.R;
+import com.hack.blackhawk.raktadaanam.utils.LocationOn;
+import com.hack.blackhawk.raktadaanam.utils.ProgressDlg;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.adatech.blackhawk.raktadaanam.utils.Config.API_URL;
-import static com.adatech.blackhawk.raktadaanam.utils.Request.getDonors;
+import static com.hack.blackhawk.raktadaanam.utils.Config.API_URL;
+import static com.hack.blackhawk.raktadaanam.utils.Request.getDonors;
 
 public class NeedBloodGroup extends AppCompatActivity implements View.OnClickListener {
 
@@ -49,16 +50,20 @@ public class NeedBloodGroup extends AppCompatActivity implements View.OnClickLis
                 if (!bg.equalsIgnoreCase("--Select--")) {
                     double latitude = LocationOn.getInstance(this).getLatitude();
                     double longitude = LocationOn.getInstance(this).getLongitude();
+                    if (latitude > 0 && longitude > 0) {
 //                    Toast.makeText(getApplicationContext(), latitude + " " + longitude, Toast.LENGTH_SHORT).show();
-                    JSONObject reqBody = new JSONObject();
-                    try {
-                        reqBody.put("lat", latitude);
-                        reqBody.put("lng", longitude);
-                        reqBody.put("blood_group", bg);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        JSONObject reqBody = new JSONObject();
+                        try {
+                            reqBody.put("lat", latitude);
+                            reqBody.put("lng", longitude);
+                            reqBody.put("blood_group", bg);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        postCall(reqBody);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Something went wrong, please try again.", Toast.LENGTH_SHORT).show();
                     }
-                    postCall(reqBody);
                 }
                 break;
         }
@@ -83,11 +88,13 @@ public class NeedBloodGroup extends AppCompatActivity implements View.OnClickLis
                 super.onPostExecute(jsonObject);
                 try {
                     if (jsonObject != null && jsonObject.getBoolean("success")) {
-                        ProgressDlg.hideProgressDialog();
                         jsonObjectOfDonors = jsonObject;
                         Intent intent = new Intent(NeedBloodGroup.this, MapActivity.class);
                         startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Something went wrong, please try again.", Toast.LENGTH_SHORT).show();
                     }
+                    ProgressDlg.hideProgressDialog();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

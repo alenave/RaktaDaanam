@@ -1,5 +1,6 @@
-package com.adatech.blackhawk.raktadaanam;
+package com.hack.blackhawk.raktadaanam;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -13,10 +14,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.adatech.blackhawk.raktadaanam.activities.DonorActivity;
-import com.adatech.blackhawk.raktadaanam.activities.NeedBloodGroup;
-import com.adatech.blackhawk.raktadaanam.utils.LocationOn;
-import com.adatech.blackhawk.raktadaanam.utils.InternetConnection;
+import com.hack.blackhawk.raktadaanam.activities.DonorActivity;
+import com.hack.blackhawk.raktadaanam.activities.NeedBloodGroup;
+import com.hack.blackhawk.raktadaanam.utils.LocationOn;
+import com.hack.blackhawk.raktadaanam.utils.InternetConnection;
+import com.hack.blackhawk.raktadaanam.utils.Permission;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Button b1, b2;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout retry;
     private ScrollView fullView;
     private Button retryButton;
+    private final Activity activity = (Activity) this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setContentView(R.layout.activity_main);
         initViews();
-        permission();
+        Permission.check(this);
         if (!InternetConnection.isInternetConnected(getApplicationContext())) {
             fullView.setVisibility(View.GONE);
             retry.setVisibility(View.VISIBLE);
@@ -55,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             });
-
         }
 
     }
@@ -69,6 +71,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         retryButton.setOnClickListener(this);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     @Override
     public void onClick(View view) {
@@ -79,35 +90,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     finish();
                 }
                 break;
-        }
-    }
-
-
-    private void permission() {
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.INTERNET)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.INTERNET},
-                    1);
-        }
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_NETWORK_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_NETWORK_STATE}, 1);
-        }
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        }
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.CALL_PHONE}, 1);
         }
     }
 }

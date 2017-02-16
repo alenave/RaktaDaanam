@@ -1,4 +1,4 @@
-package com.adatech.blackhawk.raktadaanam.activities;
+package com.hack.blackhawk.raktadaanam.activities;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -17,7 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.adatech.blackhawk.raktadaanam.utils.LocationOn;
+import com.hack.blackhawk.raktadaanam.utils.LocationOn;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
@@ -32,7 +32,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.adatech.blackhawk.raktadaanam.R;
+import com.hack.blackhawk.raktadaanam.R;
+import com.hack.blackhawk.raktadaanam.utils.Permission;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,9 +56,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         blood_group = getIntent().getStringExtra("blood_group");
-        permission();
-
-
+        Permission.check(this);
         try {
             // Loading map
             initializeMap();
@@ -66,8 +65,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         LocationOn.getInstance(this).check();
     }
 
@@ -124,35 +121,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onResume() {
         super.onResume();
         initializeMap();
-    }
-
-    private void permission() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.INTERNET)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MapActivity.this,
-                    new String[]{Manifest.permission.INTERNET},
-                    1);
-        }
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_NETWORK_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MapActivity.this,
-                    new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, 1);
-        }
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MapActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        }
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MapActivity.this,
-                    new String[]{Manifest.permission.CALL_PHONE}, 1);
-        }
     }
 
     @Override
@@ -220,7 +188,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Check if a click count was set, then display the click count.
         if (clickCount != null) {
             marker.showInfoWindow();
-            if(marker.isInfoWindowShown()) {
+            if (marker.isInfoWindowShown()) {
                 callDonor(marker);
             }
 
@@ -235,29 +203,31 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     public void callDonor(final Marker marker) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Call " + marker.getTitle().substring(7));
-        alertDialog.setCancelable(false);
-        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:" + marker.getSnippet().substring(8)));
-                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MapActivity.this,
-                            new String[]{Manifest.permission.CALL_PHONE},
-                            REQUEST_PERMISSION);
-                } else {
-                    startActivity(callIntent);
+        if (!marker.getTitle().equals("Receiver")) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setTitle("Call " + marker.getTitle().substring(7));
+            alertDialog.setCancelable(false);
+            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + marker.getSnippet().substring(8)));
+                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(MapActivity.this,
+                                new String[]{Manifest.permission.CALL_PHONE},
+                                REQUEST_PERMISSION);
+                    } else {
+                        startActivity(callIntent);
 
+                    }
                 }
-            }
-        });
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        alertDialog.show();
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+        }
     }
 }

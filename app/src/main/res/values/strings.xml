@@ -3,4 +3,5 @@
     <string name="Cancel">Cancel</string>
     <string name="gps_network_not_enabled">GPS not enabled</string>
     <string name="open_location_settings">Open location settings</string>
+    <string name="last_donated_message">You should donate blood again, only 56 days after the last donation date. We will track that for you.</string>
 </resources>
